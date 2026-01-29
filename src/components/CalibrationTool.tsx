@@ -12,6 +12,7 @@
 
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useScreenCapture } from '@/hooks/useScreenCapture';
+import type { CapturedFrame } from '@/lib/capture/types';
 
 interface Region {
   name: string;
@@ -53,7 +54,7 @@ export function CalibrationTool({ isOpen, onClose, onSaveConfig }: CalibrationTo
   const capturedOnceRef = useRef(false);
   
   const { start, stop, state } = useScreenCapture({
-    onFrame: useCallback((frame) => {
+    onFrame: useCallback((frame: CapturedFrame) => {
       // Only capture one frame
       if (capturedOnceRef.current) return;
       capturedOnceRef.current = true;

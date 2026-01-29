@@ -58,7 +58,11 @@ export function useLiveCapture(
   const [error, setError] = useState<string | null>(null);
   const [ocrStatus, setOcrStatus] = useState<OCREngineStatus>({ 
     initialized: false, 
-    loading: false 
+    loading: false,
+    isReady: false,
+    isProcessing: false,
+    progress: 0,
+    error: null,
   });
   const [selectedSite, setSelectedSite] = useState('generic');
   const [lastOCRResult, setLastOCRResult] = useState<TableOCRResult | null>(null);
@@ -266,9 +270,9 @@ export function useLiveCapture(
     try {
       // Initialize Tesseract if needed
       if (!ocrStatus.initialized) {
-        setOcrStatus({ initialized: false, loading: true });
+        setOcrStatus(prev => ({ ...prev, initialized: false, loading: true }));
         await initTesseract();
-        setOcrStatus({ initialized: true, loading: false });
+        setOcrStatus(prev => ({ ...prev, initialized: true, loading: false, isReady: true }));
       }
       
       // Start screen capture

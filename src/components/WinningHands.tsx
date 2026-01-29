@@ -4,7 +4,7 @@ import type { Card } from '@/types/poker';
 
 interface WinningHandsProps {
   communityCards: Card[];
-  heroCards: [Card, Card] | null;
+  heroCards: Card[] | null;
 }
 
 interface HandProbability {

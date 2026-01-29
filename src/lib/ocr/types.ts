@@ -57,6 +57,8 @@ export interface TableOCRResult {
 
 // OCR engine status
 export interface OCREngineStatus {
+  initialized: boolean;
+  loading: boolean;
   isReady: boolean;
   isProcessing: boolean;
   progress: number;
