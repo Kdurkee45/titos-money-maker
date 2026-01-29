@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.titosmoneymakr.app",
+  "productName": "Tito's Money Maker",
+  "directories": {
+    "output": "dist-electron"
+  },
+  "files": [
+    "electron/**/*",
+    "out/**/*",
+    "!node_modules/**/*",
+    "node_modules/@supabase/**/*",
+    "node_modules/tesseract.js/**/*",
+    "node_modules/tesseract.js-core/**/*",
+    "node_modules/zustand/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "public",
+      "to": "public"
+    }
+  ],
+  "mac": {
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      }
+    ],
+    "icon": "public/icon.icns",
+    "category": "public.app-category.games",
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "electron/entitlements.mac.plist",
+    "entitlementsInherit": "electron/entitlements.mac.plist",
+    "extendInfo": {
+      "NSScreenCaptureDescription": "This app requires screen recording permission to capture poker table images for analysis."
+    }
+  },
+  "dmg": {
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ],
+    "title": "Tito's Money Maker"
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "public/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "installerIcon": "public/icon.ico",
+    "uninstallerIcon": "public/icon.ico",
+    "installerHeaderIcon": "public/icon.ico"
+  },
+  "linux": {
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "public/icon.png",
+    "category": "Game"
+  }
+}
