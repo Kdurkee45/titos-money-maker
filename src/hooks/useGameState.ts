@@ -13,9 +13,7 @@ import {
 } from '@/lib/poker';
 import { 
   getOpeningRange, 
-  get3BetRange,
   isHandInRange,
-  PRECOMPUTED_RANGES 
 } from '@/lib/solver/precomputedRanges';
 import type { Card } from '@/lib/poker/types';
 

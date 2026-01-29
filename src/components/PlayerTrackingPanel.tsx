@@ -5,8 +5,7 @@
  * Displays all seats at the table with current occupants and behavioral stats
  */
 
-import { useState, useEffect } from 'react';
-import { useGameStore } from '@/store/gameStore';
+import { useState } from 'react';
 import type { SeatState, PlayerChange } from '@/lib/tracking/playerTracker';
 
 interface PlayerTrackingPanelProps {
@@ -49,37 +48,33 @@ const generateMockStats = (): PlayerStats => ({
 
 export function PlayerTrackingPanel({
   maxSeats = 6,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isAnonymous = true,
   onSelectPlayer,
 }: PlayerTrackingPanelProps) {
-  const [seats, setSeats] = useState<SeatState[]>([]);
-  const [playerStats, setPlayerStats] = useState<Map<string, PlayerStats>>(new Map());
-  const [recentChanges, setRecentChanges] = useState<PlayerChange[]>([]);
-  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
-  // Initialize with mock data
-  useEffect(() => {
+  // Initialize state with mock data using initializer functions
+  const [seats] = useState<SeatState[]>(() => createMockSeats(maxSeats));
+  
+  const [playerStats] = useState<Map<string, PlayerStats>>(() => {
     const mockSeats = createMockSeats(maxSeats);
-    setSeats(mockSeats);
-
-    // Generate stats for occupied seats
     const stats = new Map<string, PlayerStats>();
     mockSeats.forEach(seat => {
       if (seat.currentPlayerId) {
         stats.set(seat.currentPlayerId, generateMockStats());
       }
     });
-    setPlayerStats(stats);
-
-    // Mock recent changes
-    setRecentChanges([
+    return stats;
+  });
+  
+  const [recentChanges] = useState<PlayerChange[]>(() => {
+    const now = Date.now();
+    return [
       {
         type: 'join',
         seatNumber: 3,
         previousPlayerId: null,
         newPlayerId: 'abc123',
-        timestamp: Date.now() - 120000,
+        timestamp: now - 120000,
         details: { newStack: 200 },
       },
       {
@@ -87,11 +82,14 @@ export function PlayerTrackingPanel({
         seatNumber: 5,
         previousPlayerId: 'def456',
         newPlayerId: null,
-        timestamp: Date.now() - 300000,
+        timestamp: now - 300000,
         details: { previousStack: 0 },
       },
-    ]);
-  }, [maxSeats]);
+    ];
+  });
+  
+  const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const handleSeatClick = (seat: SeatState) => {
     setSelectedSeat(seat.seatNumber === selectedSeat ? null : seat.seatNumber);
@@ -132,8 +130,11 @@ export function PlayerTrackingPanel({
     return 'Reg';
   };
 
+  // Use a stable timestamp reference for formatting
+  const [now] = useState(() => Date.now());
+  
   const formatTime = (timestamp: number): string => {
-    const diff = Date.now() - timestamp;
+    const diff = now - timestamp;
     if (diff < 60000) return 'Just now';
     if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
     return `${Math.floor(diff / 3600000)}h ago`;

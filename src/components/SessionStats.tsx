@@ -13,7 +13,6 @@ export function SessionStats({ handHistory, sessionProfit, handsPlayed }: Sessio
   const losses = handHistory.filter(h => h.result === 'lost').length;
   const folds = handHistory.filter(h => h.result === 'folded').length;
   const showdowns = handHistory.filter(h => h.showdown).length;
-  const totalPnL = handHistory.reduce((sum, h) => sum + h.profit, 0);
 
   // Calculate running total for chart
   const chartData = handHistory.slice().reverse().reduce((acc, hand, i) => {

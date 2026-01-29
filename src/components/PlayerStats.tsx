@@ -26,15 +26,6 @@ function StatRow({ label, value, subValue, color = 'text-white' }: StatRowProps)
   );
 }
 
-function StatBar({ value, max, color }: { value: number; max: number; color: string }) {
-  const percentage = Math.min((value / max) * 100, 100);
-  return (
-    <div className="w-20 h-2 bg-gray-800 rounded overflow-hidden">
-      <div className={`h-full ${color} rounded`} style={{ width: `${percentage}%` }} />
-    </div>
-  );
-}
-
 export function PlayerStats({ player }: PlayerStatsProps) {
   const { stats } = player;
   

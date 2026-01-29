@@ -1,5 +1,8 @@
 'use client';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
+
 /**
  * Capture Debug Panel
  * Shows raw captured frames, extracted regions, and OCR results

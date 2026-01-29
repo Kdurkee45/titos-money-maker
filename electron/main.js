@@ -34,8 +34,8 @@ function createWindow() {
   });
 
   // Load the Next.js app
-  // Default to port 3001 (Next.js fallback when 3000 is in use)
-  const devPort = process.env.DEV_PORT || '3001';
+  // Default to port 3000 (matches package.json dev script)
+  const devPort = process.env.DEV_PORT || '3000';
   const startUrl = isDev 
     ? `http://localhost:${devPort}`
     : `file://${path.join(__dirname, '../out/index.html')}`;

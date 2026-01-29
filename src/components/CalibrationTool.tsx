@@ -40,17 +40,15 @@ const DEFAULT_REGIONS: Region[] = [
   { name: 'seat6', x: 0.12, y: 0.65, width: 0.14, height: 0.15, color: '#ff6600' },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function CalibrationTool({ isOpen, onClose, onSaveConfig }: CalibrationToolProps) {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [regions, setRegions] = useState<Region[]>(DEFAULT_REGIONS);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [showRegions, setShowRegions] = useState(true);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
   const stopCaptureRef = useRef<(() => void) | null>(null);
   const capturedOnceRef = useRef(false);
   

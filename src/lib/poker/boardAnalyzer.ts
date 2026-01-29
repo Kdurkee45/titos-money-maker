@@ -3,8 +3,8 @@
  * Analyzes community cards for texture, draws, and danger cards
  */
 
-import { Card, Rank, Suit, RANKS, SUITS, RANK_VALUES, BoardTexture, DrawInfo } from './types';
-import { getRankValue, isSameCard } from './equityCalculator';
+import { Card, Rank, Suit, RANKS, RANK_VALUES, BoardTexture, DrawInfo } from './types';
+import { getRankValue } from './handEvaluator';
 
 // ============================================================================
 // BOARD TEXTURE ANALYSIS

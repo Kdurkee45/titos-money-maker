@@ -101,7 +101,7 @@ export function useLiveCapture(
     // Check if frame data is valid (not all black)
     const frameData = frame.imageData.data;
     let nonBlackPixels = 0;
-    let samplePixels: string[] = [];
+    const samplePixels: string[] = [];
     for (let i = 0; i < Math.min(frameData.length, 1000); i += 40) {
       const r = frameData[i];
       const g = frameData[i + 1];

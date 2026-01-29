@@ -101,7 +101,6 @@ function runSimulation(
   const heroEval = evaluateHand(heroFullHand);
   
   // Evaluate opponent hands
-  let heroWins = true;
   let tieCount = 0;
   let opponentCardIndex = boardCardsNeeded;
   

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   PokerTable,
   PlayerCard,
@@ -49,17 +49,20 @@ function DashboardContent() {
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [showCalibration, setShowCalibration] = useState(false);
   const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [playerViewMode, setPlayerViewMode] = useState<'cards' | 'tracking'>('tracking');
   const [activeTab, setActiveTab] = useState<'analysis' | 'ranges' | 'history'>('analysis');
-  const [isElectronApp, setIsElectronApp] = useState(false);
+  // Check if running in Electron - use initializer function to avoid effect
+  const [isElectronApp] = useState(() => {
+    // This runs only once during initialization
+    if (typeof window !== 'undefined') {
+      return isElectron();
+    }
+    return false;
+  });
   
-  // Check if running in Electron on mount
-  useEffect(() => {
-    setIsElectronApp(isElectron());
-  }, []);
-  
-  const [alerts, setAlerts] = useState([
+  const [alerts, setAlerts] = useState(() => [
     {
       id: '1',
       type: 'success' as const,

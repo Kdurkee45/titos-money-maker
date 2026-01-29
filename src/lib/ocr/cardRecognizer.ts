@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Universal Card Recognizer
  * 
@@ -157,7 +159,7 @@ function analyzeCardRegion(imageData: ImageData): {
   const { data, width, height } = imageData;
   let whiteCount = 0;
   let blueCount = 0;
-  let totalPixels = width * height;
+  const totalPixels = width * height;
 
   for (let i = 0; i < data.length; i += 4) {
     const r = data[i];
