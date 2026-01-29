@@ -16,7 +16,11 @@
  * Use the Debug Panel to see captured frames and calibrate regions.
  */
 
-import { SiteConfig, RegionConfig } from '../types';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+// Site config types - using any for complex nested config structures
+type SiteConfig = any;
+type RegionConfig = any;
 
 // Ignition uses a specific color palette
 export const IGNITION_COLORS = {

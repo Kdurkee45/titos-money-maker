@@ -188,6 +188,8 @@ export async function batchRecognize(
  */
 export function getOCRStatus(): OCREngineStatus {
   return {
+    initialized: worker !== null,
+    loading: false,
     isReady: worker !== null,
     isProcessing: false, // Would need to track this
     progress: worker ? 1 : 0,

@@ -301,42 +301,53 @@ export interface Database {
         Row: User;
         Insert: UserInsert;
         Update: UserUpdate;
+        Relationships: [];
       };
       players: {
         Row: Player;
         Insert: PlayerInsert;
         Update: Partial<PlayerInsert>;
+        Relationships: [];
       };
       player_stats: {
         Row: PlayerStats;
         Insert: { player_id: string };
         Update: Partial<PlayerStats>;
+        Relationships: [];
       };
       sessions: {
         Row: Session;
-        Insert: SessionInsert;
+        Insert: SessionInsert & { user_id: string };
         Update: SessionUpdate;
+        Relationships: [];
       };
       hands: {
         Row: Hand;
         Insert: HandInsert;
         Update: HandUpdate;
+        Relationships: [];
       };
       hand_actions: {
         Row: HandAction;
         Insert: HandActionInsert;
         Update: Partial<HandActionInsert>;
+        Relationships: [];
       };
       player_observations: {
         Row: PlayerObservation;
-        Insert: PlayerObservationInsert;
+        Insert: PlayerObservationInsert & { user_id?: string };
         Update: PlayerObservationUpdate;
+        Relationships: [];
       };
       precomputed_ranges: {
         Row: PrecomputedRange;
         Insert: Omit<PrecomputedRange, 'id' | 'created_at' | 'updated_at'>;
         Update: Partial<Omit<PrecomputedRange, 'id' | 'created_at' | 'updated_at'>>;
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
     };
     Functions: {
       get_or_create_player: {
@@ -355,6 +366,12 @@ export interface Database {
         Args: { p_search_term: string; p_poker_site?: string; p_limit?: number };
         Returns: Array<Pick<Player, 'id' | 'site_player_id' | 'poker_site' | 'display_name'> & { total_hands: number }>;
       };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }

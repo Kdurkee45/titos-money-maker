@@ -13,6 +13,8 @@
  * - OCCUPANCY: The association of a player to a seat for a period of time
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { supabase } from '@/lib/supabase';
 
 export interface SeatState {
@@ -127,9 +129,10 @@ export class PlayerTracker {
     }
 
     // Case 3: Player appears to have changed (different stack than expected)
-    if (seat.isOccupied && ocrData.stackSize !== null) {
+    const currentStack = ocrData.stackSize ?? null;
+    if (seat.isOccupied && currentStack !== null) {
       const stackDelta = seat.lastSeenStackSize 
-        ? (ocrData.stackSize - seat.lastSeenStackSize) / seat.lastSeenStackSize
+        ? (currentStack - seat.lastSeenStackSize) / seat.lastSeenStackSize
         : 0;
 
       // Check for suspicious stack increase (potential new player)
@@ -143,14 +146,14 @@ export class PlayerTracker {
       }
 
       // Update stack size
-      seat.stackSize = ocrData.stackSize;
-      seat.lastSeenStackSize = ocrData.stackSize;
+      seat.stackSize = currentStack;
+      seat.lastSeenStackSize = currentStack;
       seat.isSittingOut = ocrData.isSittingOut ?? false;
 
       // Update player fingerprint
-      if (seat.currentPlayerId) {
+      if (seat.currentPlayerId && currentStack !== null) {
         this.updatePlayerFingerprint(seat.currentPlayerId, {
-          currentStack: ocrData.stackSize,
+          currentStack: currentStack,
         });
       }
     }
@@ -344,62 +347,61 @@ export class PlayerTracker {
    */
   private async getOrCreatePlayer(
     name: string,
-    initialStack: number
+    _initialStack: number
   ): Promise<string> {
     try {
+      // Generate a site_player_id based on the name and whether anonymous
+      const sitePlayerId = this.config.isAnonymous 
+        ? `anon_${crypto.randomUUID().slice(0, 8)}`
+        : name;
+      const pokerSite = 'ignition'; // TODO: make configurable
+
       // For anonymous tables, we always create a new session-specific player
-      // For non-anonymous, we look up by name
+      // For non-anonymous, we look up by site_player_id
       if (this.config.isAnonymous) {
         // Create a session-specific player record
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('players')
           .insert({
-            name: name,
-            site: 'ignition', // TODO: make configurable
-            is_anonymous: true,
-            first_seen: new Date().toISOString(),
-            last_seen: new Date().toISOString(),
-            created_by: this.config.userId,
+            site_player_id: sitePlayerId,
+            poker_site: pokerSite,
+            display_name: name,
+            first_seen_by: this.config.userId,
           })
           .select('id')
           .single();
 
         if (error) throw error;
-        return data.id;
+        if (!data) throw new Error('No player returned');
+        return (data as { id: string }).id;
       } else {
-        // Try to find existing player by name
-        const { data: existingPlayer } = await supabase
+        // Try to find existing player by site_player_id
+        const { data: existingPlayer } = await (supabase as any)
           .from('players')
           .select('id')
-          .eq('name', name)
-          .eq('created_by', this.config.userId)
+          .eq('site_player_id', name)
+          .eq('poker_site', pokerSite)
           .single();
 
         if (existingPlayer) {
-          // Update last_seen
-          await supabase
-            .from('players')
-            .update({ last_seen: new Date().toISOString() })
-            .eq('id', existingPlayer.id);
-          return existingPlayer.id;
+          return (existingPlayer as { id: string }).id;
         }
 
         // Create new player
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('players')
           .insert({
-            name,
-            site: 'unknown',
-            is_anonymous: false,
-            first_seen: new Date().toISOString(),
-            last_seen: new Date().toISOString(),
-            created_by: this.config.userId,
+            site_player_id: name,
+            poker_site: pokerSite,
+            display_name: name,
+            first_seen_by: this.config.userId,
           })
           .select('id')
           .single();
 
         if (error) throw error;
-        return data.id;
+        if (!data) throw new Error('No player returned');
+        return (data as { id: string }).id;
       }
     } catch (error) {
       console.error('Failed to get/create player:', error);

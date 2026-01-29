@@ -91,3 +91,57 @@ export interface CaptureOptions {
   quality?: number;
   detectRegions?: boolean;
 }
+
+// Player position info for a specific seat
+export interface PlayerPositionConfig {
+  seat: Region;
+  name: Region;
+  stack: Region;
+  cards: Region[];
+  bet: Region;
+  avatar?: Region;
+  action?: Region;
+}
+
+// Full region configuration for a table layout
+export interface RegionConfig {
+  pot: Region;
+  communityCards: Region[];
+  heroCards: Region[];
+  players: PlayerPositionConfig[];
+  dealer?: Region;
+  actionButtons?: Region;
+  [key: string]: unknown;
+}
+
+// Site-specific configuration
+export interface SiteConfig {
+  name: string;
+  displayName: string;
+  backgroundColors: Array<{ r: number; g: number; b: number }>;
+  tablePatterns: RegExp[];
+  defaultTableSize: number;
+  supportedTableSizes: number[];
+  regions: {
+    [tableSize: number]: RegionConfig;
+  };
+  ocrSettings: {
+    fontFamily: string;
+    stackColor: { r: number; g: number; b: number };
+    potColor: { r: number; g: number; b: number };
+    betColor: { r: number; g: number; b: number };
+    minConfidence: number;
+  };
+  cardSettings: {
+    backgroundColor: { r: number; g: number; b: number };
+    hiddenCardColor: { r: number; g: number; b: number };
+    redColor: { r: number; g: number; b: number };
+    blackColor: { r: number; g: number; b: number };
+    colorTolerance: number;
+  };
+  indicators: {
+    activePlayerColor: { r: number; g: number; b: number };
+    foldedOpacity: number;
+    dealerButtonColor: { r: number; g: number; b: number };
+  };
+}
