@@ -23,6 +23,7 @@ export async function requestScreenCapture(): Promise<MediaStream> {
   try {
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video: {
+        // @ts-expect-error - cursor is a valid property but not in TypeScript types
         cursor: 'never',
         displaySurface: 'window',
       },

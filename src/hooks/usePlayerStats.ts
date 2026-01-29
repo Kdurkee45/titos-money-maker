@@ -2,6 +2,8 @@
  * Hook for fetching and subscribing to player stats
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { Player, PlayerStats, PlayerObservation } from '@/types/database';
@@ -44,7 +46,7 @@ export function usePlayerStats(
 
     try {
       // Fetch players
-      const { data: playersData, error: playersError } = await supabase
+      const { data: playersData, error: playersError } = await (supabase as any)
         .from('players')
         .select('*')
         .in('id', playerIds);
@@ -52,7 +54,7 @@ export function usePlayerStats(
       if (playersError) throw playersError;
 
       // Fetch stats
-      const { data: statsData, error: statsError } = await supabase
+      const { data: statsData, error: statsError } = await (supabase as any)
         .from('player_stats')
         .select('*')
         .in('player_id', playerIds);
@@ -60,7 +62,7 @@ export function usePlayerStats(
       if (statsError) throw statsError;
 
       // Fetch observations (user's own)
-      const { data: obsData, error: obsError } = await supabase
+      const { data: obsData, error: obsError } = await (supabase as any)
         .from('player_observations')
         .select('*')
         .in('player_id', playerIds);
@@ -68,11 +70,11 @@ export function usePlayerStats(
       if (obsError) throw obsError;
 
       // Combine data
-      const statsMap = new Map(statsData?.map(s => [s.player_id, s]) || []);
-      const obsMap = new Map(obsData?.map(o => [o.player_id, o]) || []);
+      const statsMap = new Map((statsData as PlayerStats[])?.map(s => [s.player_id, s]) || []);
+      const obsMap = new Map((obsData as PlayerObservation[])?.map(o => [o.player_id, o]) || []);
 
       const newPlayers = new Map<string, PlayerWithStats>();
-      for (const player of playersData || []) {
+      for (const player of (playersData as Player[]) || []) {
         newPlayers.set(player.id, {
           player,
           stats: statsMap.get(player.id) || null,
@@ -94,7 +96,7 @@ export function usePlayerStats(
     updates: Partial<PlayerObservation>
   ) => {
     try {
-      const { data: existing } = await supabase
+      const { data: existing } = await (supabase as any)
         .from('player_observations')
         .select('id')
         .eq('player_id', playerId)
@@ -102,13 +104,13 @@ export function usePlayerStats(
 
       if (existing) {
         // Update existing
-        await supabase
+        await (supabase as any)
           .from('player_observations')
           .update(updates)
           .eq('player_id', playerId);
       } else {
         // Create new
-        await supabase
+        await (supabase as any)
           .from('player_observations')
           .insert({
             player_id: playerId,
@@ -188,8 +190,16 @@ export function usePlayerStats(
 /**
  * Hook for searching players
  */
+interface SearchResult {
+  id: string;
+  site_player_id: string;
+  poker_site: string;
+  display_name: string | null;
+  total_hands: number;
+}
+
 export function usePlayerSearch() {
-  const [results, setResults] = useState<Player[]>([]);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const search = useCallback(async (term: string, site?: string) => {
@@ -201,7 +211,7 @@ export function usePlayerSearch() {
     setIsSearching(true);
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .rpc('search_players', {
           p_search_term: term,
           p_poker_site: site || null,
@@ -209,7 +219,7 @@ export function usePlayerSearch() {
         });
 
       if (error) throw error;
-      setResults(data || []);
+      setResults((data as SearchResult[]) || []);
     } catch {
       setResults([]);
     } finally {
